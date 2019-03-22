@@ -47,10 +47,6 @@ def generateImage(imageTarget, generations, numberdots):
         print("pene")
         imageTarget.show()
 
-    
-   
-
-
     print("\n")
         
 def pycasso(filePath, generations,numberdots):
