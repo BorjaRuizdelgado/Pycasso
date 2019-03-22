@@ -1,7 +1,8 @@
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageChops
 from random import randint
 import argparse
 import sys
+import numpy
 
 class Point:
     def __init__(self, maxX, maxY):
@@ -31,21 +32,35 @@ def print_same_line(text):
     sys.stdout.write(text)
     sys.stdout.flush()
 
+def composeImage(points, size):
+    newImage = Image.new("RGB",size,(255,255,255))
+    canvas = ImageDraw.Draw(newImage)
+    for point in points:
+            canvas.ellipse([point.x-point.radius,point.y-point.radius,point.x+point.radius,point.y+point.radius],outline=(point.r,point.g,point.b),fill=(point.r,point.g,point.b))
+    return newImage
+
+
+#from STACK OVERFLOW need a new fitness function
+def fitness(image1, image2):
+     #Convert Image types to numpy arrays
+    i1 = numpy.array(image1,numpy.int16)
+    i2 = numpy.array(image2,numpy.int16)
+    dif = numpy.sum(numpy.abs(i1-i2))
+    return (dif / 255.0 * 100) / i1.size
+
+
 def generateImage(imageTarget, generations, numberdots):
     generation = 0
     width, height = imageTarget.size
     allPoints = [Point(width,height) for i in range(numberdots)]
 
-
-
     while (generation != generations):
         print_same_line("Generation number: " + str(generation))
         generation += 1
-        newImage = ImageDraw.Draw(imageTarget)
-        for point in allPoints:
-             newImage.ellipse([point.x-point.radius,point.y-point.radius,point.x+point.radius,point.y+point.radius],outline=(point.r,point.g,point.b),fill=(point.r,point.g,point.b))
-        print("pene")
-        imageTarget.show()
+
+        newImage = composeImage(allPoints, imageTarget.size)
+        newImage.show()
+        
 
     print("\n")
         
