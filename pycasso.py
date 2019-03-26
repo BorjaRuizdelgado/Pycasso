@@ -6,41 +6,25 @@ import numpy
 from operator import itemgetter
 from copy import deepcopy
 
-positionMutationChanace = 50
-colorMutationChanace = 60
-radiusMutationChanace = 20
-
+positionMutationChanace = 20
+colorMutationChanace = 10
+radiusMutationChanace = 10
+colors = []
 class Point:
     def __init__(self, maxX, maxY):
         self.maxSizeX = maxX
         self.maxSizeY = maxY
         self.x = randint(0,maxX)
         self.y = randint(0,maxY)
-        self.radius = randint(10,50)
-        self.r = randint(0,255)
-        self.g = randint(0,255)
-        self.b = randint(0,255)
-
-    def setRadius(self, radius):
-        self.radius = radius
-    
-    def setColor(self, r, g, b):
-        self.r = r
-        self.g = g
-        self.b = b
-
-    def changePos(self, x, y):
-        self.x = x
-        self.y = y
+        self.radius = randint(5,30)
+        self.color = colors[randint(0,(len(colors)-1))]
 
     def mutate(self):
         if(randint(0,100) <= colorMutationChanace):
-            self.r = randint(0,255)
-            self.g = randint(0,255)
-            self.b = randint(0,255)
+             self.color = colors[randint(0,(len(colors)-1))]
 
         if(randint(0,100) <= radiusMutationChanace):
-            self.radius = randint(10,50)
+            self.radius = randint(5,30)
             
         if(randint(0,100) <= positionMutationChanace):
             self.x = randint(0,self.maxSizeX)
@@ -50,13 +34,13 @@ class Picture:
     def __init__(self, size, numberdots):
         self.size = size
         width, height = size
-        self.points = [Point(width,height) for i in range(numberdots)]
+        self.points = [Point(width, height) for i in range(numberdots)]
     
     def composeImage(self):
         newImage = Image.new("RGB",self.size,(255,255,255))
         canvas = ImageDraw.Draw(newImage)
         for point in self.points:
-                canvas.ellipse([point.x-point.radius,point.y-point.radius,point.x+point.radius,point.y+point.radius],outline=(point.r,point.g,point.b),fill=(point.r,point.g,point.b))
+                canvas.ellipse([point.x-point.radius,point.y-point.radius,point.x+point.radius,point.y+point.radius],outline=point.color,fill=point.color)
         return newImage
 
     #from STACK OVERFLOW need a new fitness function
@@ -80,8 +64,6 @@ class Picture:
     def getSize(self):
         return self.size
 
-    
-
 class Population:
     def __init__(self, size, numberdots, populationSize, originalImage):
         self.originalImage = originalImage
@@ -89,20 +71,19 @@ class Population:
     
     def crossover(self):
         scoredPopulation = self.scorePopulation()
-        scoredPopulationSorted = sorted(scoredPopulation,key=itemgetter(1), reverse=True)
+        scoredPopulationSorted = sorted(scoredPopulation,key=itemgetter(1))
         firstHalf = [a[0] for a in scoredPopulationSorted[:int((len(scoredPopulationSorted)+1)/2)]]
-        #for a in scoredPopulationSorted:
-            #print(a[1])
+        for a in scoredPopulationSorted:
+            print(a[1])
 
-        for i in range(0, len(firstHalf)):
-            newPic = self.mix(firstHalf[1], firstHalf[i])
+        for i in range(0, len(firstHalf), 2):
+            newPic = self.mix(firstHalf[i], firstHalf[i+1])
             newPic.mutatePic()
             firstHalf.append(newPic)
-            newPic = self.mix(firstHalf[1], firstHalf[i])
+            newPic = self.mix(firstHalf[i], firstHalf[i+1])
             newPic.mutatePic()
             firstHalf.append(newPic)
 
-        #print(len(firstHalf))
         self.pictures = firstHalf[:len(scoredPopulation)]
         self.best = deepcopy(firstHalf[0])
 
@@ -128,11 +109,9 @@ class Population:
                 newPoints.append(firstPoints[i])
             else:
                 newPoints.append(secondPoints[i])
-        newPic = Picture(first.getSize(), len(newPoints))
+        newPic = Picture(first.getSize(), len(newPoints),)
         newPic.setPoints(newPoints)
         return newPic
-
-
 
 def print_same_line(text):
     sys.stdout.write('\r')
@@ -140,14 +119,12 @@ def print_same_line(text):
     sys.stdout.write(text)
     sys.stdout.flush()
 
-
-
 def generateImage(imageTarget, generations, numberdots, populationSize):
     generation = 0
     population = Population(imageTarget.size,numberdots,populationSize,imageTarget)
 
     while (generation != generations):
-        print_same_line("Generation number: " + str(generation))
+        print("Generation number: " + str(generation))
         generation += 1
         population.crossover()
     
@@ -155,13 +132,17 @@ def generateImage(imageTarget, generations, numberdots, populationSize):
 
 
     print("\n")
-        
+  
 def pycasso(args):
 
     try:
         print(args)
         imageTarget = Image.open(args.path)
         imageTarget.show()
+        allColors =  imageTarget.getcolors(imageTarget.size[0]*imageTarget.size[1])
+        global colors
+        colors = [a[1] for a in sorted(allColors, key=itemgetter(1), reverse = True)]
+        #print(colors)
         print('The image will be painted with ' + str(args.numberdots) + ' dots.\n')
         generateImage(imageTarget, args.numbergenerations, args.numberdots, args.populationsize)
     except IOError:
@@ -171,9 +152,9 @@ def pycasso(args):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', default=None, required=True, help='Path to find the image')
-    parser.add_argument('--numbergenerations', default=100, type= int,required=False,help='Number of generations the program will make')
-    parser.add_argument('--numberdots', default=500,type= int,required=False, help='Number of dots to generate the image')
-    parser.add_argument('--populationsize', default=26,type= int,required=False, help='Size of the population')
+    parser.add_argument('--numbergenerations', default=1000, type= int,required=False,help='Number of generations the program will make')
+    parser.add_argument('--numberdots', default=200,type= int,required=False, help='Number of dots to generate the image')
+    parser.add_argument('--populationsize', default=50,type= int,required=False, help='Size of the population')
     args = parser.parse_args()
     pycasso(args)
 
