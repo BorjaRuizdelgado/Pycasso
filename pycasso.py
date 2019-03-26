@@ -6,9 +6,9 @@ import numpy
 from operator import itemgetter
 from copy import deepcopy
 
-positionMutationChanace = 30
-colorMutationChanace = 30
-radiusMutationChanace = 30
+positionMutationChanace = 50
+colorMutationChanace = 50
+radiusMutationChanace = 20
 colors = []
 class Point:
     def __init__(self, maxX, maxY):
@@ -83,8 +83,7 @@ class Population:
         scoredPopulation = self.scorePopulation()
         scoredPopulationSorted = sorted(scoredPopulation,key=itemgetter(1))
         firstHalf = [a[0] for a in scoredPopulationSorted[:int((len(scoredPopulationSorted)+1)/2)]]
-        for a in scoredPopulationSorted:
-            print(a[1])
+        print(scoredPopulation[0][1])
 
         for i in range(0, len(firstHalf), 2):
             newPic = self.mix(firstHalf[i], firstHalf[i+1])
@@ -152,7 +151,6 @@ def pycasso(args):
         allColors =  imageTarget.getcolors(imageTarget.size[0]*imageTarget.size[1])
         global colors
         colors = [a[1] for a in sorted(allColors, key=itemgetter(1), reverse = True)]
-        #print(colors)
         print('The image will be painted with ' + str(args.numberdots) + ' dots.\n')
         generateImage(imageTarget, args.numbergenerations, args.numberdots, args.populationsize)
     except IOError:
@@ -162,9 +160,9 @@ def pycasso(args):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', default=None, required=True, help='Path to find the image')
-    parser.add_argument('--numbergenerations', default=200, type= int,required=False,help='Number of generations the program will make')
+    parser.add_argument('--numbergenerations', default=2000, type= int,required=False,help='Number of generations the program will make')
     parser.add_argument('--numberdots', default=200,type= int,required=False, help='Number of dots to generate the image')
-    parser.add_argument('--populationsize', default=40,type= int,required=False, help='Size of the population')
+    parser.add_argument('--populationsize', default=50,type= int,required=False, help='Size of the population')
     args = parser.parse_args()
     pycasso(args)
 
