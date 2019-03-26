@@ -95,10 +95,10 @@ class Population:
             print(a[1])
 
         for i in range(0, len(newPopulation), 2):
-            newPc = self.sex(newPopulation[i], newPopulation[i+1])
+            newPc = self.crossover(newPopulation[i], newPopulation[i+1])
             newPc.mutatePic()
             newPopulation.append(newPc)
-            newPc = self.sex(newPopulation[i], newPopulation[i+1])
+            newPc = self.crossover(newPopulation[i], newPopulation[i+1])
             newPc.mutatePic()
             newPopulation.append(newPc)
 
@@ -120,7 +120,7 @@ class Population:
     def getBest(self):
         return self.best
     
-    def sex(self, first, second):
+    def crossover(self, first, second):
         newPoints = []
         firstPoints = first.getPoints()
         secondPoints = second.getPoints()
@@ -172,9 +172,9 @@ def pycasso(args):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', default=None, required=True, help='Path to find the image')
-    parser.add_argument('--numbergenerations', default=100, required=False,help='Number of generations the program will make')
-    parser.add_argument('--numberdots', default=500,required=False, help='Number of dots to generate the image')
-    parser.add_argument('--populationsize', default=12,required=False, help='Size of the population')
+    parser.add_argument('--numbergenerations', default=100, type= int,required=False,help='Number of generations the program will make')
+    parser.add_argument('--numberdots', default=500,type= int,required=False, help='Number of dots to generate the image')
+    parser.add_argument('--populationsize', default=12,type= int,required=False, help='Size of the population')
     args = parser.parse_args()
     pycasso(args)
 
