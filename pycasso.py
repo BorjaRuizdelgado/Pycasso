@@ -95,10 +95,10 @@ class Population:
             print(a[1])
 
         for i in range(0, len(newPopulation), 2):
-            newPc = self.crossover(newPopulation[i], newPopulation[i+1])
+            newPc = self.mix(newPopulation[i], newPopulation[i+1])
             newPc.mutatePic()
             newPopulation.append(newPc)
-            newPc = self.crossover(newPopulation[i], newPopulation[i+1])
+            newPc = self.mix(newPopulation[i], newPopulation[i+1])
             newPc.mutatePic()
             newPopulation.append(newPc)
 
@@ -120,7 +120,7 @@ class Population:
     def getBest(self):
         return self.best
     
-    def crossover(self, first, second):
+    def mix(self, first, second):
         newPoints = []
         firstPoints = first.getPoints()
         secondPoints = second.getPoints()
