@@ -4,11 +4,13 @@ import argparse
 import sys
 import numpy
 from operator import itemgetter
-from copy import deepcopy
 
-positionMutationChanace = 50
-colorMutationChanace = 60
-radiusMutationChanace = 20
+positionMutationChanace = 20
+colorMutationChanace = 20
+radiusMutationChanace = 2
+
+
+################## CLASSES ##################
 
 class Point:
     def __init__(self, maxX, maxY):
@@ -20,18 +22,6 @@ class Point:
         self.r = randint(0,255)
         self.g = randint(0,255)
         self.b = randint(0,255)
-
-    def setRadius(self, radius):
-        self.radius = radius
-    
-    def setColor(self, r, g, b):
-        self.r = r
-        self.g = g
-        self.b = b
-
-    def changePos(self, x, y):
-        self.x = x
-        self.y = y
 
     def mutate(self):
         if(randint(0,100) <= colorMutationChanace):
@@ -75,76 +65,16 @@ class Picture:
         return self.points
     
     def setPoints(self, points):
-        self.points = deepcopy(points)
+        self.points = points
     
     def getSize(self):
         return self.size
 
-    
+################## GENETIC ALGORITHM ##################
 
-class Population:
-    def __init__(self, size, numberdots, populationSize, originalImage):
-        self.originalImage = originalImage
-        self.pictures = [Picture(size, numberdots) for i in range(populationSize)]
-    
-    def crossover(self):
-        scoredPopulation = self.scorePopulation()
-        scoredPopulationSorted = sorted(scoredPopulation,key=itemgetter(1), reverse=True)
-        firstHalf = [a[0] for a in scoredPopulationSorted[:int((len(scoredPopulationSorted)+1)/2)]]
-        #for a in scoredPopulationSorted:
-            #print(a[1])
-
-        for i in range(0, len(firstHalf)):
-            newPic = self.mix(firstHalf[1], firstHalf[i])
-            newPic.mutatePic()
-            firstHalf.append(newPic)
-            newPic = self.mix(firstHalf[1], firstHalf[i])
-            newPic.mutatePic()
-            firstHalf.append(newPic)
-
-        #print(len(firstHalf))
-        self.pictures = firstHalf[:len(scoredPopulation)]
-        self.best = deepcopy(firstHalf[0])
-
-        
-    def scorePopulation(self):
-        scoredPopulation = []
-        
-        for picture in self.pictures:
-            punctuation = picture.fitness(self.originalImage)
-            scoredPopulation.append((picture,punctuation))
-
-        return scoredPopulation
-
-    def getBest(self):
-        return self.best
-    
-    def mix(self, first, second):
-        newPoints = []
-        firstPoints = first.getPoints()
-        secondPoints = second.getPoints()
-        for i in range(len(firstPoints)):
-            if(randint(1,2) == 2):
-                newPoints.append(firstPoints[i])
-            else:
-                newPoints.append(secondPoints[i])
-        newPic = Picture(first.getSize(), len(newPoints))
-        newPic.setPoints(newPoints)
-        return newPic
-
-
-
-def print_same_line(text):
-    sys.stdout.write('\r')
-    sys.stdout.flush()
-    sys.stdout.write(text)
-    sys.stdout.flush()
-
-
-
-def generateImage(imageTarget, generations, numberdots, populationSize):
+def createArt(imageTarget, generations, numberdots, populationSize):
     generation = 0
-    population = Population(imageTarget.size,numberdots,populationSize,imageTarget)
+    #population = Population(imageTarget.size,numberdots,populationSize,imageTarget)
 
     while (generation != generations):
         print_same_line("Generation number: " + str(generation))
@@ -155,7 +85,8 @@ def generateImage(imageTarget, generations, numberdots, populationSize):
 
 
     print("\n")
-        
+
+
 def pycasso(args):
 
     try:
@@ -163,20 +94,29 @@ def pycasso(args):
         imageTarget = Image.open(args.path)
         imageTarget.show()
         print('The image will be painted with ' + str(args.numberdots) + ' dots.\n')
-        generateImage(imageTarget, args.numbergenerations, args.numberdots, args.populationsize)
+        createArt(imageTarget, args.numbergenerations, args.numberdots, args.populationsize)
     except IOError:
         print("Couldn't open the file")
         exit()
+
+
+################## UTILS ##################
+def print_same_line(text):
+    sys.stdout.write('\r')
+    sys.stdout.flush()
+    sys.stdout.write(text)
+    sys.stdout.flush()
+
+###########################################
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', default=None, required=True, help='Path to find the image')
     parser.add_argument('--numbergenerations', default=100, type= int,required=False,help='Number of generations the program will make')
     parser.add_argument('--numberdots', default=500,type= int,required=False, help='Number of dots to generate the image')
-    parser.add_argument('--populationsize', default=26,type= int,required=False, help='Size of the population')
+    parser.add_argument('--populationsize', default=12,type= int,required=False, help='Size of the population')
     args = parser.parse_args()
     pycasso(args)
-
 
 
 main()
