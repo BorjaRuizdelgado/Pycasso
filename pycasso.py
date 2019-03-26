@@ -72,18 +72,14 @@ class Picture:
 
     def getPoints(self):
         return self.points
+    
+    def setPoints(self, points):
+        self.points = points
+    
+    def getSize(self):
+        return self.size
 
-
-    def sex(self, other):
-        newPoints = []
-        otherPoints = other.getPoints()
-        for i in range(len(self.points)):
-            if(randint(1,2) == 2):
-                newPoints.append(otherPoints[i])
-            else:
-                newPoints.append(self.points[i])
-        self.points = newPoints
-        return self
+    
 
 class Population:
     def __init__(self, size, numberdots, populationSize, originalImage):
@@ -92,13 +88,23 @@ class Population:
     
     def crossover(self):
         scoredPopulation = self.scorePopulation()
-        newPopulation = scoredPopulation[:int(len(scoredPopulation)/2)]
-        for i in range(0,int(len(scoredPopulation)/2)):
-            newPic = scoredPopulation[i*2].sex(scoredPopulation[i*2 + 1])
-            newPic.mutatePic()
-            newPopulation.append(newPic)
+        scoredPopulationSorted = sorted(scoredPopulation,key=itemgetter(1), reverse=True)
+        newPopulation = [a[0] for a in scoredPopulationSorted[:int((len(scoredPopulationSorted)+1)/2)]]
+        print("\n")
+        for a in scoredPopulationSorted:
+            print(a[1])
 
-        self.pictures = newPopulation
+        for i in range(0, len(newPopulation), 2):
+            newPc = self.sex(newPopulation[i], newPopulation[i+1])
+            newPc.mutatePic()
+            newPopulation.append(newPc)
+            newPc = self.sex(newPopulation[i], newPopulation[i+1])
+            newPc.mutatePic()
+            newPopulation.append(newPc)
+
+
+        print(len(newPopulation))
+        self.pictures = newPopulation[:len(scoredPopulation)]
         self.best = newPopulation[0]
 
         
@@ -109,15 +115,23 @@ class Population:
             punctuation = picture.fitness(self.originalImage)
             scoredPopulation.append((picture,punctuation))
 
-        scoredPopulationSorted = sorted(scoredPopulation,key=itemgetter(1), reverse=True)
-
-        for p in scoredPopulationSorted:
-           print(p[1])
-
-        return [p[0] for p in scoredPopulationSorted]
+        return scoredPopulation
 
     def getBest(self):
         return self.best
+    
+    def sex(self, first, second):
+        newPoints = []
+        firstPoints = first.getPoints()
+        secondPoints = second.getPoints()
+        for i in range(len(firstPoints)):
+            if(randint(1,2) == 2):
+                newPoints.append(firstPoints[i])
+            else:
+                newPoints.append(secondPoints[i])
+        newPic = Picture(first.getSize(), len(newPoints))
+        newPic.setPoints(newPoints)
+        return newPic
 
 
 
@@ -160,7 +174,7 @@ def main():
     parser.add_argument('--path', default=None, required=True, help='Path to find the image')
     parser.add_argument('--numbergenerations', default=100, required=False,help='Number of generations the program will make')
     parser.add_argument('--numberdots', default=500,required=False, help='Number of dots to generate the image')
-    parser.add_argument('--populationsize', default=50,required=False, help='Size of the population')
+    parser.add_argument('--populationsize', default=12,required=False, help='Size of the population')
     args = parser.parse_args()
     pycasso(args)
 
