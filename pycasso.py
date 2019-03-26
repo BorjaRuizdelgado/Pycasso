@@ -6,9 +6,9 @@ import numpy
 from operator import itemgetter
 from copy import deepcopy
 
-positionMutationChanace = 20
-colorMutationChanace = 10
-radiusMutationChanace = 10
+positionMutationChanace = 30
+colorMutationChanace = 30
+radiusMutationChanace = 30
 colors = []
 class Point:
     def __init__(self, maxX, maxY):
@@ -27,8 +27,18 @@ class Point:
             self.radius = randint(5,30)
             
         if(randint(0,100) <= positionMutationChanace):
-            self.x = randint(0,self.maxSizeX)
-            self.y = randint(0,self.maxSizeY)
+            newPosX = self.x + randint(-30,30)
+            if newPosX < 0 :
+                newPosX = 0
+            elif newPosX > self.maxSizeX:
+                newPosX = self.maxSizeX
+            newPosY = self.y + randint(-30,30)
+            if newPosY < 0 :
+                newPosY = 0
+            elif newPosY > self.maxSizeY:
+                newPosY = self.maxSizeY
+            self.x = newPosX
+            self.y = newPosY
 
 class Picture:
     def __init__(self, size, numberdots):
@@ -152,9 +162,9 @@ def pycasso(args):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', default=None, required=True, help='Path to find the image')
-    parser.add_argument('--numbergenerations', default=1000, type= int,required=False,help='Number of generations the program will make')
+    parser.add_argument('--numbergenerations', default=200, type= int,required=False,help='Number of generations the program will make')
     parser.add_argument('--numberdots', default=200,type= int,required=False, help='Number of dots to generate the image')
-    parser.add_argument('--populationsize', default=50,type= int,required=False, help='Size of the population')
+    parser.add_argument('--populationsize', default=40,type= int,required=False, help='Size of the population')
     args = parser.parse_args()
     pycasso(args)
 
