@@ -29,19 +29,8 @@ class Point:
 
         elif whichMutation == 3:
             
-            newPosX = self.x + randint(-100, 100)
-            if newPosX < 0:
-                newPosX = 0
-            elif newPosX > self.maxSizeX:
-                newPosX = self.maxSizeX
-            newPosY = self.y + randint(-100, 100)
-            if newPosY < 0:
-                newPosY = 0
-            elif newPosY > self.maxSizeY:
-                newPosY = self.maxSizeY
-            
-            self.x = newPosX
-            self.y = newPosY
+            self.x = randint(0,self.maxSizeX)
+            self.y = randint(0,self.maxSizeY)
 
             
         
