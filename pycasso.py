@@ -39,6 +39,9 @@ class Point:
                 newPosY = 0
             elif newPosY > self.maxSizeY:
                 newPosY = self.maxSizeY
+            
+            self.x = newPosX
+            self.y = newPosY
 
             
         
@@ -143,7 +146,7 @@ def generateImage(imageTarget, generations, numberDots, populationSize):
         generation += 1
         population.crossover()
 
-    population.getBest().composeImage().show()
+    population.getBest().composeImage().save("image"+str(randint(0,1000))+".jpg")
 
     print("\n")
 
@@ -152,7 +155,7 @@ def pycasso(args):
     try:
         print(args)
         imageTarget = Image.open(args.path)
-        imageTarget.show()
+        # imageTarget.show()
         allColors = imageTarget.getcolors(imageTarget.size[0] * imageTarget.size[1])
         global colors
         colors = [a[1] for a in sorted(allColors, key=itemgetter(1), reverse=True)]
