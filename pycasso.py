@@ -134,7 +134,7 @@ def generateImage(imageTarget, generations, numberDots, populationSize):
         generation += 1
         population.crossover()
         if generation % 200 == 0:
-            population.getBest().composeImage().save(".\\generateLisa\\image"+str(generation)+".jpg")
+            population.getBest().composeImage().save(".\\generateYoshi\\image"+str(generation)+".jpg")
             
     population.getBest().composeImage().save("image"+str(randint(0,1000))+".jpg")
 
