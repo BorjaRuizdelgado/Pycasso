@@ -16,19 +16,18 @@ class Point:
         self.maxSizeY = maxY
         self.x = randint(0, maxX)
         self.y = randint(0, maxY)
-        self.radius = randint(5, 15)
+        self.radius = randint(1, 20)
         self.color = colors[randint(0, (len(colors) - 1))]
 
     def mutate(self):
-        whichMutation = randint(3,10)
+        whichMutation = randint(1,3)
         if whichMutation == 1:
             self.color = colors[randint(0, (len(colors) - 1))]
 
         elif whichMutation == 2:
-            self.radius = randint(5, 15)
+            self.radius = randint(1, 20)
 
-        elif whichMutation == 3:
-            
+        else:
             self.x = randint(0,self.maxSizeX)
             self.y = randint(0,self.maxSizeY)
 
@@ -134,7 +133,9 @@ def generateImage(imageTarget, generations, numberDots, populationSize):
         print("Generation number: " + str(generation))
         generation += 1
         population.crossover()
-
+        if generation % 200 == 0:
+            population.getBest().composeImage().save(".\\generateLisa\\image"+str(generation)+".jpg")
+            
     population.getBest().composeImage().save("image"+str(randint(0,1000))+".jpg")
 
     print("\n")
