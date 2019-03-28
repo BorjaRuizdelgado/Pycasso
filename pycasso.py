@@ -16,18 +16,17 @@ class Point:
         self.maxSizeY = maxY
         self.x = randint(0, maxX)
         self.y = randint(0, maxY)
-        self.radius = randint(1, 20)
+        self.radius = randint(1, 25)
         self.color = colors[randint(0, (len(colors) - 1))]
 
     def mutate(self):
-        whichMutation = randint(1,3)
-        if whichMutation == 1:
+        if randint(1,200) == 1:
             self.color = colors[randint(0, (len(colors) - 1))]
 
-        elif whichMutation == 2:
-            self.radius = randint(1, 20)
+        if randint(1,200) == 2:
+            self.radius = randint(1, 25)
 
-        else:
+        if randint(1,200) == 3:
             self.x = randint(0,self.maxSizeX)
             self.y = randint(0,self.maxSizeY)
 
@@ -81,11 +80,12 @@ class Population:
     def crossover(self):
         scoredPopulation = self.scorePopulation()
         scoredPopulationSorted = sorted(scoredPopulation, key=itemgetter(1))
-        firstHalf = [a[0] for a in scoredPopulationSorted[:int((len(scoredPopulationSorted) + 1) / 2)]]
+        allPics = [a[0] for a in scoredPopulationSorted]
+        firstHalf = allPics[:int((len(allPics) + 1) / 2)]
         print(scoredPopulation[0][1])
 
         for i in range(0, len(firstHalf)):
-            newPic = self.mix(firstHalf[i], firstHalf[randint(0, len(firstHalf) - 1)])
+            newPic = self.mix(firstHalf[i], allPics[randint(0, len(allPics) - 1)])
             newPic.mutatePic()
             firstHalf.append(newPic)
 
@@ -109,7 +109,7 @@ class Population:
         firstPoints = first.getPoints()
         secondPoints = second.getPoints()
         for i in range(len(firstPoints)):
-            if randint(1, 2) == 2:
+            if i% 10 <= 5:
                 newPoints.append(firstPoints[i])
             else:
                 newPoints.append(secondPoints[i])
@@ -134,7 +134,7 @@ def generateImage(imageTarget, generations, numberDots, populationSize):
         generation += 1
         population.crossover()
         if generation % 200 == 0:
-            population.getBest().composeImage().save(".\\generateYoshi\\image"+str(generation)+".jpg")
+            population.getBest().composeImage().save(".\\generateLisa\\image"+str(generation)+".jpg")
             
     population.getBest().composeImage().save("image"+str(randint(0,1000))+".jpg")
 
