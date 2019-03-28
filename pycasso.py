@@ -20,13 +20,13 @@ class Point:
         self.color = colors[randint(0, (len(colors) - 1))]
 
     def mutate(self):
-        if randint(1,200) == 1:
+        if randint(1,400) == 1:
             self.color = colors[randint(0, (len(colors) - 1))]
 
-        if randint(1,200) == 2:
+        if randint(1,400) == 2:
             self.radius = randint(1, 25)
 
-        if randint(1,200) == 3:
+        if randint(1,400) == 3:
             self.x = randint(0,self.maxSizeX)
             self.y = randint(0,self.maxSizeY)
 
@@ -134,7 +134,7 @@ def generateImage(imageTarget, generations, numberDots, populationSize):
         generation += 1
         population.crossover()
         if generation % 200 == 0:
-            population.getBest().composeImage().save(".\\generateLisa\\image"+str(generation)+".jpg")
+            population.getBest().composeImage().save(".\\generateMario\\image"+str(generation)+".jpg")
             
     population.getBest().composeImage().save("image"+str(randint(0,1000))+".jpg")
 
