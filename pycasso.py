@@ -16,7 +16,7 @@ class Point:
         self.maxSizeY = maxY
         self.x = randint(0, maxX)
         self.y = randint(0, maxY)
-        self.radius = randint(1, 20)
+        self.radius = randint(1, 10)
         self.color = colors[randint(0, (len(colors) - 1))]
 
     #Mutation of a point based on a probability.
@@ -25,7 +25,7 @@ class Point:
             self.color = colors[randint(0, (len(colors) - 1))]
 
         if randint(1,400) == 2:
-            self.radius = randint(1, 20)
+            self.radius = randint(1, 10)
 
         if randint(1,400) == 3:
             self.x = randint(0,self.maxSizeX)
@@ -41,7 +41,7 @@ class Picture:
 
     #From the data structure composes an image with the PIL library.
     def composeImage(self):
-        newImage = Image.new("RGB", self.size, (255, 255, 255))
+        newImage = Image.new("RGB", self.size, (0, 0, 0))
         canvas = ImageDraw.Draw(newImage)
         for point in self.points:
             canvas.ellipse(
@@ -136,7 +136,7 @@ def generateImage(imageTarget, generations, numberDots, populationSize):
         generation += 1
         population.crossover()
         if generation % 50 == 0:
-            population.getBest().composeImage().save("image"+str(generation)+".jpg")
+            population.getBest().composeImage().save(".\\generateBall3\\image"+str(generation)+".jpg")
             
     population.getBest().composeImage().save("image"+str(randint(0,1000))+".jpg")
 
